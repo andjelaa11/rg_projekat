@@ -12,11 +12,12 @@
 #include <learnopengl/model.h>
 #include <iostream>
 
-
+bool flag=false;
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // declaration functions
+void renderQuad();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -25,7 +26,7 @@ unsigned int initEBOBuffers();
 void processInput(GLFWwindow *window);
 unsigned int loadTexture(const char *path);
 unsigned int loadCubemap(vector<std::string> faces);
-
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // camera
 Camera camera(glm::vec3(2.0f, 0.0f, 6.0f));
@@ -78,31 +79,32 @@ int main()
         return -1;
     }
 
-    // configure global opengl state
-    // -----------------------------
+    //skybox iz background
     glEnable(GL_DEPTH_TEST);
 
     // build and compile our shader zprogram
     // ------------------------------------
     Shader lightingShader("resources/shaders/lightShaderM.vs", "resources/shaders/lightShaderM.fs");
-    std::cout<<"1"<<"\n";
+
     Shader lightCubeShader("resources/shaders/lightCube.vs", "resources/shaders/lightCube.fs");
-    std::cout<<"2"<<"\n";
+
     Shader ourShader("resources/shaders/modelShader.vs", "resources/shaders/modelShader.fs");
-    std::cout<<"3"<<"\n";
+
     Shader skyboxShader("resources/shaders/skyboxShader.vs", "resources/shaders/skyboxShader.fs");
-    std::cout<<"4"<<"\n";
+
     Shader snowShader("resources/shaders/snowflakeShader.vs", "resources/shaders/snowflakeShader.fs");
-    std::cout<<"5"<<"\n";
+
 
     Shader chairShader(FileSystem::getPath("resources/shaders/chair.vs").c_str(),FileSystem::getPath("resources/shaders/chair.fs").c_str() );
-    std::cout<<"6"<<"\n";
+
 
     // models loading
     Model ourModel("resources/objects/santa/Santa.obj");
     Model ourModel1("resources/objects/ball/ball.obj");
     Model ourModel2("resources/objects/chair-obj/source/chair_obj/Chair obj/Chair.obj");
 
+    // CHANGE CULLING
+    glCullFace(GL_BACK);
 
 
     // set up vertex data (and buffer(s)) and configure vertex attributes  --gifts
@@ -151,6 +153,8 @@ int main()
             -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
             -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
+
+    glFrontFace(GL_CW);
     // positions of gifts
     glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f),
@@ -216,6 +220,8 @@ int main()
             -1.0f, -1.0f,  1.0f,
             1.0f, -1.0f,  1.0f
     };
+
+
     // snowflake rectangle
     float transparentVertices[] = {
             // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
@@ -293,12 +299,12 @@ int main()
                     "resources/textures/skybox/back.jpg"
             };
     unsigned int cubemapTexture = loadCubemap(faces);
-
+    
     // load textures (we now use a utility function to keep the code more organized)
     // -----------------------------------------------------------------------------
-    unsigned int diffuseMap = loadTexture("resources/textures/ribbon.jpg");
+    unsigned int diffuseMap = loadTexture("resources/textures/gift.jpg");
     unsigned int specularMap = loadTexture("resources/textures/glitter.png");
-    unsigned int transparentTexture = loadTexture("resources/textures/snowflake1.png");
+    unsigned int transparentTexture = loadTexture("resources/textures/snow.png");
 
     // lightningShader configuration
     // --------------------
@@ -315,6 +321,7 @@ int main()
     snowShader.use();
     snowShader.setInt("texture1", 0);
 
+    lightingShader.setBool("blin", false);
     while (!glfwWindowShouldClose(window))
     {
         // per-frame time logic
@@ -334,6 +341,9 @@ int main()
 
 
         lightingShader.use();
+        if(!flag) {
+            lightingShader.setBool("blin", true);
+        }
         lightingShader.setVec3("viewPos", camera.Position);
         lightingShader.setFloat("material.shininess", 32.0f);
 
@@ -392,6 +402,8 @@ int main()
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
 
+
+
         // world transformation
         glm::mat4 model = glm::mat4(1.0f);
         lightingShader.setMat4("model", model);
@@ -418,6 +430,13 @@ int main()
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
+
+
+
+
+
+
 
         // using ebo to draw a cube- source of light
         renderLightCube(VAO2, lightCubeShader, camera, glm::vec3(0.8f,0.2f,4.0f));
@@ -449,10 +468,9 @@ int main()
 
         model=glm::mat4(1.0f);
 
-
-        model = glm::translate(model, glm::vec3(7.0f, 1.0f, -10.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(7.0f, -03.0f, -9.0f)); // translate it down so it's at the center of the scene
         model=glm::rotate(model,glm::radians(-90.0f),glm::vec3(1.0f,0.0f,0.0f));
-        model=glm::rotate(model,glm::radians(-30.0f),glm::vec3(0.0f,0.0f,1.0f));
+        model=glm::rotate(model,glm::radians(-45.0f),glm::vec3(0.0f,0.0f,1.0f));
         model = glm::scale(model, glm::vec3(0.05f));	// it's a bit too big for our scene, so scale it down
 
         ourShader.setMat4("model", model);
@@ -466,21 +484,21 @@ int main()
 
 
 
-        auto modelChair= glm::mat4(1.0f);
-        modelChair= glm::translate(modelChair, glm::vec3(7.0f, 0.0f, -10.0f));
-        modelChair=glm::rotate(modelChair, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        modelChair = glm::scale(modelChair, glm::vec3(0.005f));
+        auto modelChair= glm::mat4(2.0f);
+        modelChair= glm::translate(modelChair, glm::vec3(9.0f, 0.0f, -9.0f));
+        modelChair=glm::rotate(modelChair, glm::radians(-70.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelChair = glm::scale(modelChair, glm::vec3(0.008f));
 
         chairShader.setMat4("model", modelChair);
         ourModel2.Draw(chairShader);
-
-
 
 
         // using blanding for snowflakes- discard techinque
         snowShader.use();
         snowShader.setMat4("projection", projection);
         snowShader.setMat4("view", view);
+
+
 
         glBindVertexArray(transparentVAO);
         glBindTexture(GL_TEXTURE_2D, transparentTexture);
@@ -496,7 +514,9 @@ int main()
         }
 
 
-        // skybox
+
+
+        //drow  skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         skyboxShader.use();
         view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
@@ -509,6 +529,8 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
+
+        std::cout << (flag ? "Blinn-Phong" : "Phong") << std::endl;
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -708,13 +730,12 @@ unsigned int loadCubemap(vector<std::string> faces)
         if (data)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-            stbi_image_free(data);
         }
         else
         {
-            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-            stbi_image_free(data);
+            std::cout << "Faild to load cube map: " << faces[i] << std::endl;
         }
+        stbi_image_free(data);
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -723,4 +744,114 @@ unsigned int loadCubemap(vector<std::string> faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return textureID;
+}
+
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+
+    if(key==GLFW_KEY_B && action==GLFW_PRESS) {
+        if(flag) {
+            flag=false;
+        }
+        else {
+            flag=true;
+        }
+    }
+
+
+}
+
+
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+
+void renderQuad()
+{
+    if (quadVAO == 0)
+    {
+        // positions
+        glm::vec3 pos1(-1.0f,  1.0f, 0.0f);
+        glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
+        glm::vec3 pos3( 1.0f, -1.0f, 0.0f);
+        glm::vec3 pos4( 1.0f,  1.0f, 0.0f);
+        // texture coordinates
+        glm::vec2 uv1(0.0f, 1.0f);
+        glm::vec2 uv2(0.0f, 0.0f);
+        glm::vec2 uv3(1.0f, 0.0f);
+        glm::vec2 uv4(1.0f, 1.0f);
+        // normal vector
+        glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+        // calculate tangent/bitangent vectors of both triangles
+        glm::vec3 tangent1, bitangent1;
+        glm::vec3 tangent2, bitangent2;
+        // triangle 1
+        // ----------
+        glm::vec3 edge1 = pos2 - pos1;
+        glm::vec3 edge2 = pos3 - pos1;
+        glm::vec2 deltaUV1 = uv2 - uv1;
+        glm::vec2 deltaUV2 = uv3 - uv1;
+
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+        bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+        // triangle 2
+        // ----------
+        edge1 = pos3 - pos1;
+        edge2 = pos4 - pos1;
+        deltaUV1 = uv3 - uv1;
+        deltaUV2 = uv4 - uv1;
+
+        f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+
+        bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+
+        float quadVertices[] = {
+                // positions            // normal         // texcoords  // tangent                          // bitangent
+                pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+                pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+                pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+
+                pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+                pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+                pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
+        };
+        // configure plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(6 * sizeof(float)));
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(8 * sizeof(float)));
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(float), (void*)(11 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
 }
