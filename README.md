@@ -9,5 +9,5 @@
 5. Zaglavlja (h i hpp) fajlovi idu u include
 6. Šejderi idu u folder shaders. `Vertex shader` ima ekstenziju `.vs`, `fragment shader` ima ekstenziju `.fs`
 7. ALT+SHIFT+F10 -> project_base -> run
-8. Link za youtube snimak projekta je  https://www.youtube.com/watch?v=eYx8e2umVWo
+8. Link za youtube snimak projekta je https://youtu.be/tYqFqfcFLAQ
 9. Implementirana je oblast skybox  iz grupe A
