@@ -81,6 +81,7 @@ int main()
 
     //skybox iz background
     glEnable(GL_DEPTH_TEST);
+    glCullFace(GL_FRONT);
 
     // build and compile our shader zprogram
     // ------------------------------------
@@ -433,20 +434,20 @@ int main()
             // CHANGE CULLING
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
-
+            glDisable(GL_CULL_FACE);
 
 
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-           // float scaleAmount=sin(glfwGetTime());
-         //   model = glm::scale(model,glm::vec3(scaleAmount,scaleAmount,scaleAmount));
+            float scaleAmount=sin(glfwGetTime());
+            model = glm::scale(model,glm::vec3(scaleAmount,scaleAmount,scaleAmount));
             lightingShader.setMat4("model", model);
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        glDisable(GL_CULL_FACE);
+       // glDisable(GL_CULL_FACE);
 
 
 
