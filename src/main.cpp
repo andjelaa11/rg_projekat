@@ -13,8 +13,8 @@
 #include <iostream>
 
 bool flag=false;
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1024;
+const unsigned int SCR_HEIGHT = 768;
 
 // declaration functions
 
@@ -321,8 +321,17 @@ int main()
     lightingShader.setInt("material.diffuse", 0);
     lightingShader.setInt("material.specular", 1);
 
+    ourModel2.SetShaderTextureNamePrefix("material.");
+
+    ourModel.SetShaderTextureNamePrefix("material.");
+    ourShader.use();
+    ourShader.setInt("material.texture_diffuse1", 0);
+
+    chairShader.use();
+    chairShader.setInt("material.texture_diffuse1", 0);
     // render loop
     // -----------
+    lightingShader.use();
     unsigned int VAO2 = initEBOBuffers();
 
     // snowShader configuration
@@ -473,12 +482,69 @@ int main()
 
         // santa claus
         ourShader.use();
+        
+        //setup uniforms
+        ourShader.setVec3("viewPos", camera.Position);
+        ourShader.setFloat("material.shininess", 32.0f);
+        ourShader.setVec3("material.specular", glm::vec3(0.25f));
+
+        // directional light
+        ourShader.setVec3("dirLight.direction", 2.2f, -1.0f, -0.3f);
+        ourShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        ourShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        ourShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        // point light 1
+        ourShader.setVec3("pointLights[0].position", pointLightPositions[0]);
+        ourShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+        ourShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        ourShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("pointLights[0].constant", 1.0f);
+        ourShader.setFloat("pointLights[0].linear", 0.09);
+        ourShader.setFloat("pointLights[0].quadratic", 0.032);
+        // point light 2
+        ourShader.setVec3("pointLights[1].position", pointLightPositions[1]);
+        ourShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+        ourShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+        ourShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("pointLights[1].constant", 1.0f);
+        ourShader.setFloat("pointLights[1].linear", 0.09);
+        ourShader.setFloat("pointLights[1].quadratic", 0.032);
+        // point light 3
+        ourShader.setVec3("pointLights[2].position", pointLightPositions[2]);
+        ourShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+        ourShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        ourShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("pointLights[2].constant", 1.0f);
+        ourShader.setFloat("pointLights[2].linear", 0.09);
+        ourShader.setFloat("pointLights[2].quadratic", 0.032);
+        // point light 4
+        ourShader.setVec3("pointLights[3].position", pointLightPositions[3]);
+        ourShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+        ourShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        ourShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("pointLights[3].constant", 1.0f);
+        ourShader.setFloat("pointLights[3].linear", 0.09);
+        ourShader.setFloat("pointLights[3].quadratic", 0.032);
+        // spotLight
+        ourShader.setVec3("spotLight.position", camera.Position);
+        ourShader.setVec3("spotLight.direction", camera.Front);
+        ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        ourShader.setFloat("spotLight.constant", 1.0f);
+        ourShader.setFloat("spotLight.linear", 0.09);
+        ourShader.setFloat("spotLight.quadratic", 0.032);
+        ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+
+
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
         model=glm::mat4(1.0f);
 
-        model = glm::translate(model, glm::vec3(7.0f, -03.0f, -9.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(7.0f, -3.0f, -9.0f)); // translate it down so it's at the center of the scene
         model=glm::rotate(model,glm::radians(-90.0f),glm::vec3(1.0f,0.0f,0.0f));
         model=glm::rotate(model,glm::radians(-45.0f),glm::vec3(0.0f,0.0f,1.0f));
         model = glm::scale(model, glm::vec3(0.05f));	// it's a bit too big for our scene, so scale it down
@@ -487,12 +553,65 @@ int main()
         ourModel.Draw(ourShader);
 
 
-
+        // chair 
         chairShader.use();
+        
+        //setup uniforms
+        chairShader.setVec3("viewPos", camera.Position);
+        chairShader.setFloat("material.shininess", 32.0f);
+        chairShader.setVec3("material.specular", glm::vec3(0.2f));
+
+        // directional light
+        chairShader.setVec3("dirLight.direction", 2.2f, -1.0f, -0.3f);
+        chairShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        chairShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        chairShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        // point light 1
+        chairShader.setVec3("pointLights[0].position", pointLightPositions[0]);
+        chairShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+        chairShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        chairShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        chairShader.setFloat("pointLights[0].constant", 1.0f);
+        chairShader.setFloat("pointLights[0].linear", 0.09);
+        chairShader.setFloat("pointLights[0].quadratic", 0.032);
+        // point light 2
+        chairShader.setVec3("pointLights[1].position", pointLightPositions[1]);
+        chairShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+        chairShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+        chairShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+        chairShader.setFloat("pointLights[1].constant", 1.0f);
+        chairShader.setFloat("pointLights[1].linear", 0.09);
+        chairShader.setFloat("pointLights[1].quadratic", 0.032);
+        // point light 3
+        chairShader.setVec3("pointLights[2].position", pointLightPositions[2]);
+        chairShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+        chairShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        chairShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+        chairShader.setFloat("pointLights[2].constant", 1.0f);
+        chairShader.setFloat("pointLights[2].linear", 0.09);
+        chairShader.setFloat("pointLights[2].quadratic", 0.032);
+        // point light 4
+        chairShader.setVec3("pointLights[3].position", pointLightPositions[3]);
+        chairShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+        chairShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        chairShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+        chairShader.setFloat("pointLights[3].constant", 1.0f);
+        chairShader.setFloat("pointLights[3].linear", 0.09);
+        chairShader.setFloat("pointLights[3].quadratic", 0.032);
+        // spotLight
+        chairShader.setVec3("spotLight.position", camera.Position);
+        chairShader.setVec3("spotLight.direction", camera.Front);
+        chairShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        chairShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        chairShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        chairShader.setFloat("spotLight.constant", 1.0f);
+        chairShader.setFloat("spotLight.linear", 0.09);
+        chairShader.setFloat("spotLight.quadratic", 0.032);
+        chairShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        chairShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
         chairShader.setMat4("projection", projection);
         chairShader.setMat4("view", view);
-
-
 
         auto modelChair= glm::mat4(2.0f);
         modelChair= glm::translate(modelChair, glm::vec3(9.0f, 0.0f, -9.0f));
@@ -501,7 +620,6 @@ int main()
 
         chairShader.setMat4("model", modelChair);
         ourModel2.Draw(chairShader);
-
 
         // using blanding for snowflakes- discard techinque
         snowShader.use();
