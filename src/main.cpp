@@ -96,13 +96,13 @@ int main()
     Shader snowShader("resources/shaders/snowflakeShader.vs", "resources/shaders/snowflakeShader.fs");
 
 
-    Shader chairShader(FileSystem::getPath("resources/shaders/chair.vs").c_str(),FileSystem::getPath("resources/shaders/chair.fs").c_str() );
+    Shader skiShader(FileSystem::getPath("resources/shaders/chair.vs").c_str(),FileSystem::getPath("resources/shaders/chair.fs").c_str() );
 
 
     // models loading
     Model ourModel("resources/objects/santa/Santa.obj");
     Model ourModel1("resources/objects/ball/ball.obj");
-    Model ourModel2("resources/objects/chair-obj/source/chair_obj/Chair obj/Chair.obj");
+    Model ourModel2("resources/objects/skis/10534_Snow_skis_v1_L3.obj");
 
 
 
@@ -327,8 +327,8 @@ int main()
     ourShader.use();
     ourShader.setInt("material.texture_diffuse1", 0);
 
-    chairShader.use();
-    chairShader.setInt("material.texture_diffuse1", 0);
+    skiShader.use();
+    skiShader.setInt("material.texture_diffuse1", 0);
     // render loop
     // -----------
     lightingShader.use();
@@ -544,82 +544,85 @@ int main()
 
         model=glm::mat4(1.0f);
 
-        model = glm::translate(model, glm::vec3(7.0f, -3.0f, -9.0f)); // translate it down so it's at the center of the scene
+        model = glm::translate(model, glm::vec3(7.5f, -4.70f, -10.0f)); // translate it down so it's at the center of the scene
         model=glm::rotate(model,glm::radians(-90.0f),glm::vec3(1.0f,0.0f,0.0f));
-        model=glm::rotate(model,glm::radians(-45.0f),glm::vec3(0.0f,0.0f,1.0f));
-        model = glm::scale(model, glm::vec3(0.05f));	// it's a bit too big for our scene, so scale it down
+        model=glm::rotate(model,glm::radians(-60.0f),glm::vec3(0.0f,0.0f,1.0f));
+        model=glm::rotate(model,glm::radians(-20.0f),glm::vec3(0.0f,1.0f,0.0f));
+        model = glm::scale(model, glm::vec3(0.06f));	// it's a bit too big for our scene, so scale it down
 
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
 
 
         // chair 
-        chairShader.use();
+        skiShader.use();
         
         //setup uniforms
-        chairShader.setVec3("viewPos", camera.Position);
-        chairShader.setFloat("material.shininess", 32.0f);
-        chairShader.setVec3("material.specular", glm::vec3(0.2f));
+        skiShader.setVec3("viewPos", camera.Position);
+        skiShader.setFloat("material.shininess", 32.0f);
+        skiShader.setVec3("material.specular", glm::vec3(0.2f));
 
         // directional light
-        chairShader.setVec3("dirLight.direction", 2.2f, -1.0f, -0.3f);
-        chairShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        chairShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        chairShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        skiShader.setVec3("dirLight.direction", 2.2f, -1.0f, -0.3f);
+        skiShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        skiShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        skiShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
         // point light 1
-        chairShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-        chairShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        chairShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        chairShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        chairShader.setFloat("pointLights[0].constant", 1.0f);
-        chairShader.setFloat("pointLights[0].linear", 0.09);
-        chairShader.setFloat("pointLights[0].quadratic", 0.032);
+        skiShader.setVec3("pointLights[0].position", pointLightPositions[0]);
+        skiShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+        skiShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        skiShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        skiShader.setFloat("pointLights[0].constant", 1.0f);
+        skiShader.setFloat("pointLights[0].linear", 0.09);
+        skiShader.setFloat("pointLights[0].quadratic", 0.032);
         // point light 2
-        chairShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-        chairShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        chairShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        chairShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        chairShader.setFloat("pointLights[1].constant", 1.0f);
-        chairShader.setFloat("pointLights[1].linear", 0.09);
-        chairShader.setFloat("pointLights[1].quadratic", 0.032);
+        skiShader.setVec3("pointLights[1].position", pointLightPositions[1]);
+        skiShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+        skiShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+        skiShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+        skiShader.setFloat("pointLights[1].constant", 1.0f);
+        skiShader.setFloat("pointLights[1].linear", 0.09);
+        skiShader.setFloat("pointLights[1].quadratic", 0.032);
         // point light 3
-        chairShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-        chairShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-        chairShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-        chairShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-        chairShader.setFloat("pointLights[2].constant", 1.0f);
-        chairShader.setFloat("pointLights[2].linear", 0.09);
-        chairShader.setFloat("pointLights[2].quadratic", 0.032);
+        skiShader.setVec3("pointLights[2].position", pointLightPositions[2]);
+        skiShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+        skiShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        skiShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+        skiShader.setFloat("pointLights[2].constant", 1.0f);
+        skiShader.setFloat("pointLights[2].linear", 0.09);
+        skiShader.setFloat("pointLights[2].quadratic", 0.032);
         // point light 4
-        chairShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-        chairShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-        chairShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-        chairShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-        chairShader.setFloat("pointLights[3].constant", 1.0f);
-        chairShader.setFloat("pointLights[3].linear", 0.09);
-        chairShader.setFloat("pointLights[3].quadratic", 0.032);
+        skiShader.setVec3("pointLights[3].position", pointLightPositions[3]);
+        skiShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+        skiShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        skiShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+        skiShader.setFloat("pointLights[3].constant", 1.0f);
+        skiShader.setFloat("pointLights[3].linear", 0.09);
+        skiShader.setFloat("pointLights[3].quadratic", 0.032);
         // spotLight
-        chairShader.setVec3("spotLight.position", camera.Position);
-        chairShader.setVec3("spotLight.direction", camera.Front);
-        chairShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-        chairShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-        chairShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-        chairShader.setFloat("spotLight.constant", 1.0f);
-        chairShader.setFloat("spotLight.linear", 0.09);
-        chairShader.setFloat("spotLight.quadratic", 0.032);
-        chairShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-        chairShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+        skiShader.setVec3("spotLight.position", camera.Position);
+        skiShader.setVec3("spotLight.direction", camera.Front);
+        skiShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        skiShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        skiShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        skiShader.setFloat("spotLight.constant", 1.0f);
+        skiShader.setFloat("spotLight.linear", 0.09);
+        skiShader.setFloat("spotLight.quadratic", 0.032);
+        skiShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        skiShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-        chairShader.setMat4("projection", projection);
-        chairShader.setMat4("view", view);
+        skiShader.setMat4("projection", projection);
+        skiShader.setMat4("view", view);
 
-        auto modelChair= glm::mat4(2.0f);
-        modelChair= glm::translate(modelChair, glm::vec3(9.0f, 0.0f, -9.0f));
-        modelChair=glm::rotate(modelChair, glm::radians(-70.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        modelChair = glm::scale(modelChair, glm::vec3(0.008f));
+        auto modelski= glm::mat4(2.0f);
+        modelski= glm::translate(modelski, glm::vec3(3.7f, -2.5f, -5.0f));
+        modelski=glm::rotate(modelski, glm::radians(65.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelski=glm::rotate(modelski, glm::radians(100.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelski=glm::rotate(modelski, glm::radians(-44.5f), glm::vec3(1.0f, 0.0f, 0.0f));
+        modelski = glm::scale(modelski, glm::vec3(0.04f));
 
-        chairShader.setMat4("model", modelChair);
-        ourModel2.Draw(chairShader);
+        skiShader.setMat4("model", modelski);
+        ourModel2.Draw(skiShader);
 
         // using blanding for snowflakes- discard techinque
         snowShader.use();
