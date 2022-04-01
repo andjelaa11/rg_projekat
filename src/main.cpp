@@ -319,9 +319,7 @@ int main()
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
-
-
-   // definisanje svega sto treba za rad sa bloom i HDR
+    // definisanje svega sto treba za rad sa bloom i HDR
     unsigned int hdrFBO;
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
@@ -372,7 +370,6 @@ int main()
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             std::cout << "Framebuffer not complete!" << std::endl;
     }
-
 
 
 
@@ -434,11 +431,12 @@ int main()
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
         lightingShader.use();
         if(!flag) {
@@ -448,10 +446,10 @@ int main()
         lightingShader.setFloat("material.shininess", 32.0f);
 
         // directional light
-        lightingShader.setVec3("dirLight.direction", -20.2f, -20.0f, -0.3f);
+        lightingShader.setVec3("dirLight.direction", 2.2f, -1.0f, -0.3f);
         lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        lightingShader.setVec3("dirLight.diffuse", 0.8f, 0.8f, 0.8f);
-        lightingShader.setVec3("dirLight.specular", 1.0f, 1.0f, 1.0f);
+        lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 
         // point light 1
         lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
@@ -780,7 +778,6 @@ int main()
         hdrShader.setFloat("exposure", exposure);
         renderQuad();
 
-
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window); //2 bafera, trenutni salje na crtanje nakon cega ga prazni
@@ -833,12 +830,12 @@ void processInput(GLFWwindow *window)
         hdrKeyPressed = false;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS && !bloomKeyPressed)
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS && !bloomKeyPressed)
     {
         bloom = !bloom;
         bloomKeyPressed = true;
     }
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_RELEASE)
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_RELEASE)
     {
         bloomKeyPressed = false;
     }
