@@ -321,8 +321,7 @@ int main()
 
 
 
-    //**********************************************************************************
-    // definisanje svega sto treba za rad sa bloom i HDR
+   // definisanje svega sto treba za rad sa bloom i HDR
     unsigned int hdrFBO;
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
