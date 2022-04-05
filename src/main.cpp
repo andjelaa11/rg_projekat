@@ -29,7 +29,7 @@ unsigned int loadCubemap(vector<std::string> faces);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void renderQuad();
 // camera
-Camera camera(glm::vec3(2.0f, 0.0f, 6.0f));
+Camera camera(glm::vec3(2.0f, 0.0f, 10.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -38,7 +38,7 @@ bool hdr = true;
 bool hdrKeyPressed = false;
 bool bloom = true;
 bool bloomKeyPressed = false;
-float exposure = 1.0f;
+float exposure =0.5f;
 
 
 // timing
@@ -431,7 +431,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.1f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.05f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
@@ -446,7 +446,7 @@ int main()
         lightingShader.setFloat("material.shininess", 32.0f);
 
         // directional light
-        lightingShader.setVec3("dirLight.direction", 2.2f, -1.0f, -0.3f);
+        lightingShader.setVec3("dirLight.direction", 1.2f, -1.0f, -0.3f);
         lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
         lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
         lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
