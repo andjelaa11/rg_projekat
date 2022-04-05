@@ -10,5 +10,5 @@
 6. Šejderi idu u folder shaders. `Vertex shader` ima ekstenziju `.vs`, `fragment shader` ima ekstenziju `.fs`
 7. ALT+SHIFT+F10 -> project_base -> run
 8. Link za youtube snimak projekta je https://youtu.be/tYqFqfcFLAQ
-9. Implementirana je oblast skybox  iz grupe A
+9. Implementirana je oblast skybox  iz grupe A 
 10.Implementiran je bloom i hdr efekat iz grupe B (koji se pali na slovo K, jer je B za Blinn-Phongov model )
